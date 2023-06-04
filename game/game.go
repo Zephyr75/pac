@@ -54,7 +54,7 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
       return g, tea.Quit
     }
   }
-  g.GameMap[g.PlayerPos.Y][g.PlayerPos.Y] = 0
+  g.GameMap[g.PlayerPos.Y][g.PlayerPos.X] = 0
   if g.PlayerChar == "C" { 
     g.PlayerChar = "c"
   } else {
