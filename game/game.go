@@ -8,24 +8,24 @@ import (
 )
 
 type Point struct {
-  x int
-  y int
+  X int
+  Y int
 }
 
 type Game struct {
-  width int
-  height int
-  playerPos Point
-  playerChar string
-  gameMap [][]int
-  ghosts []ghost.Ghost
+  Width int
+  Height int
+  PlayerPos Point
+  PlayerChar string
+  GameMap [][]int
+  Ghosts []ghost.Ghost
 }
 
 
 func (g Game) Init() tea.Cmd {
-  // g.ghosts = append(g.ghosts, ghost{point{g.width - 2, g.height - 2}, "B", blinky})
-  // g.ghosts = append(g.ghosts, ghost{point{g.width - 2, 1}, "I", inky})
-  // g.ghosts = append(g.ghosts, ghost{point{1, g.height - 2}, "P", pinky})
+  // g.ghosts = append(g.ghosts, ghost{point{g.Width - 2, g.Height - 2}, "B", blinky})
+  // g.ghosts = append(g.ghosts, ghost{point{g.Width - 2, 1}, "I", inky})
+  // g.ghosts = append(g.ghosts, ghost{point{1, g.Height - 2}, "P", pinky})
   // g.ghosts = append(g.ghosts, ghost{point{1, 1}, "Y", clyde})
   return nil
 }
@@ -35,30 +35,30 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
   case tea.KeyMsg:
     switch msg.String() {
     case "up", "k":
-      if g.playerPos.y > 0 {
-        g.playerPos.y--
+      if g.PlayerPos.Y > 0 {
+        g.PlayerPos.Y--
       }
     case "down", "j":
-      if g.playerPos.y < g.height - 1 {
-        g.playerPos.y++
+      if g.PlayerPos.Y < g.Height - 1 {
+        g.PlayerPos.Y++
       }
     case "left", "h":
-      if g.playerPos.x > 0 {
-        g.playerPos.x--
+      if g.PlayerPos.X > 0 {
+        g.PlayerPos.X--
       }
     case "right", "l":
-      if g.playerPos.x < g.width - 1 {
-        g.playerPos.x++
+      if g.PlayerPos.X < g.Width - 1 {
+        g.PlayerPos.X++
       }
     case "ctrl+c":
       return g, tea.Quit
     }
   }
-  g.gameMap[g.playerPos.y][g.playerPos.x] = 0
-  if g.playerChar == "C" { 
-    g.playerChar = "c"
+  g.GameMap[g.PlayerPos.Y][g.PlayerPos.Y] = 0
+  if g.PlayerChar == "C" { 
+    g.PlayerChar = "c"
   } else {
-    g.playerChar = "C"
+    g.PlayerChar = "C"
   }
   return g, nil
 }
@@ -73,12 +73,12 @@ var (
 
 func (g Game) View() string {
   var s string
-  for y := 0; y < g.height; y++ {
-    for x := 0; x < g.width; x++ {
-      if x == g.playerPos.x && y == g.playerPos.y {
-        s += yellow.Render(g.playerChar)
+  for y := 0; y < g.Height; y++ {
+    for x := 0; x < g.Width; x++ {
+      if x == g.PlayerPos.X && y == g.PlayerPos.Y {
+        s += yellow.Render(g.PlayerChar)
       } else {
-        switch g.gameMap[y][x] {
+        switch g.GameMap[y][x] {
         case 0:
           s += white.Render(" ")
         case 1:

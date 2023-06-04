@@ -1,5 +1,8 @@
 package ghost
 
+import (
+)
+
 type ghostType int
 
 const (
@@ -10,12 +13,8 @@ const (
 )
 
 type Ghost struct {
-  pos Point
+  // pos game.Point
   char string
   ghostType ghostType
 }
 
-
-func NewGame() Game {
-  return Game{}
-}

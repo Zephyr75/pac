@@ -6,10 +6,11 @@ import (
 	"log"
   "strconv"
 
+  "pac/game" 
 )
 
-func LoadGame(level int) main.Game {
-  name := "level_" + strconv.Itoa(level) + ".txt"
+func LoadGame(level int) game.Game {
+  name := "load/levels/level_" + strconv.Itoa(level) + ".txt"
   file, err := os.Open(name)
 	if err != nil {
 		log.Fatal(err)
@@ -45,7 +46,7 @@ func LoadGame(level int) main.Game {
     PlayerPos: playerPos,
     PlayerChar: "C",
     GameMap: gameMap,
-    Ghosts: make([]game.Ghost, 0),
+    // Ghosts: make([]game.Ghost, 0),
   }
 
   return game
