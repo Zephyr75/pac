@@ -21,28 +21,36 @@ func LoadGame(level int) game.Game {
   gameMap := make([][]int, 0)
   playerPos := game.Point{X: 0, Y: 0}
 
+  width := 0
+  height := 0
+
   lineNbr := 0
 	for scanner.Scan() {
+    if (len(scanner.Text()) == 0) {
+      break
+    }
+    width = len(scanner.Text())
+    line := make([]int, 0)
     for i, c := range scanner.Text() {
-      line := make([]int, 0)
       switch c {
       case '.':
         line = append(line, 1)
       case '#':
-        line = append(line, 1)
+        line = append(line, 2)
       case 'C':
         playerPos = game.Point{X: i, Y: lineNbr}
       default:
         line = append(line, 0)
       }
-      gameMap = append(gameMap, line)
     }
+    gameMap = append(gameMap, line)
     lineNbr++
   }
+  height = lineNbr
 
   game := game.Game {
-    Width: len(gameMap[0]),
-    Height: len(gameMap),
+    Width: width,
+    Height: height,
     PlayerPos: playerPos,
     PlayerChar: "C",
     GameMap: gameMap,
