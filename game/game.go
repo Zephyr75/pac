@@ -35,19 +35,19 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
   case tea.KeyMsg:
     switch msg.String() {
     case "up", "k":
-      if g.PlayerPos.Y > 0 {
+      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
         g.PlayerPos.Y--
       }
     case "down", "j":
-      if g.PlayerPos.Y < g.Height - 1 {
+      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 2 {
         g.PlayerPos.Y++
       }
     case "left", "h":
-      if g.PlayerPos.X > 0 {
+      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 2 {
         g.PlayerPos.X--
       }
     case "right", "l":
-      if g.PlayerPos.X < g.Width - 1 {
+      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 2 {
         g.PlayerPos.X++
       }
     case "ctrl+c":
@@ -83,6 +83,8 @@ func (g Game) View() string {
           s += white.Render(" ")
         case 1:
           s += white.Render(".")
+        case 2:
+          s += white.Render("#")
         }
       }
     }

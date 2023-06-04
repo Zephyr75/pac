@@ -39,6 +39,7 @@ func LoadGame(level int) game.Game {
         line = append(line, 2)
       case 'C':
         playerPos = game.Point{X: i, Y: lineNbr}
+        line = append(line, 1)
       default:
         line = append(line, 0)
       }
