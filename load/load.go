@@ -7,6 +7,8 @@ import (
   "strconv"
 
   "pac/game" 
+  "pac/utils"
+  "pac/ghost"
 )
 
 func LoadGame(level int) game.Game {
@@ -19,12 +21,13 @@ func LoadGame(level int) game.Game {
 	scanner := bufio.NewScanner(file)
 
   gameMap := make([][]int, 0)
-  playerPos := game.Point{X: 0, Y: 0}
+  playerPos := utils.Point{X: 0, Y: 0}
 
   width := 0
   height := 0
   dots := 0
-  mapTeleports := make(map[int][]game.Point)
+  mapTeleports := make(map[int][]utils.Point)
+  ghosts := make([]ghost.Ghost, 0)
 
   lineNbr := 0
 	for scanner.Scan() {
@@ -42,17 +45,41 @@ func LoadGame(level int) game.Game {
         line = append(line, 2)
       case '#':
         line = append(line, 3)
-      case 'C':
-        playerPos = game.Point{X: i, Y: lineNbr}
+      case 'c':
+        playerPos = utils.Point{X: i, Y: lineNbr}
         line = append(line, 1)
+      case 'B':
+        ghosts = append(ghosts, ghost.Ghost{
+          Pos: utils.Point{X: i, Y: lineNbr}, 
+          GhostType: ghost.Blinky,
+        })
+        line = append(line, 0)
+      case 'I':
+        ghosts = append(ghosts, ghost.Ghost{
+          Pos: utils.Point{X: i, Y: lineNbr},
+          GhostType: ghost.Inky,
+        })
+        line = append(line, 0)
+      case 'P':
+        ghosts = append(ghosts, ghost.Ghost{
+          Pos: utils.Point{X: i, Y: lineNbr},
+          GhostType: ghost.Pinky,
+        })
+        line = append(line, 0)
+      case 'C':
+        ghosts = append(ghosts, ghost.Ghost{
+          Pos: utils.Point{X: i, Y: lineNbr},
+          GhostType: ghost.Clyde,
+        })
+        line = append(line, 0)
       case '1':
-        mapTeleports[1] = append(mapTeleports[1], game.Point{X: i, Y: lineNbr})
+        mapTeleports[1] = append(mapTeleports[1], utils.Point{X: i, Y: lineNbr})
         line = append(line, 0)
       case '2':
-        mapTeleports[2] = append(mapTeleports[2], game.Point{X: i, Y: lineNbr})
+        mapTeleports[2] = append(mapTeleports[2], utils.Point{X: i, Y: lineNbr})
         line = append(line, 0)
       case '3':
-        mapTeleports[3] = append(mapTeleports[3], game.Point{X: i, Y: lineNbr})
+        mapTeleports[3] = append(mapTeleports[3], utils.Point{X: i, Y: lineNbr})
         line = append(line, 0)
       default:
         line = append(line, 0)
@@ -80,7 +107,7 @@ func LoadGame(level int) game.Game {
     GameMap: gameMap,
     Dots: dots,
     Teleports: teleports,
-    // Ghosts: make([]game.Ghost, 0),
+    Ghosts: ghosts,
   }
 
   return game

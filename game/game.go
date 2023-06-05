@@ -7,16 +7,12 @@ import (
 	"github.com/charmbracelet/lipgloss"
   "time"
   "strconv"
+  "pac/utils"
 )
 
-type Point struct {
-  X int
-  Y int
-}
-
 type Teleport struct {
-  A Point
-  B Point
+  A utils.Point
+  B utils.Point
 }
 
 
@@ -30,10 +26,18 @@ const (
   Idle  direction = 4
 )
 
+
+const (
+  Empty  int = 0
+  Dot    int = 1
+  BigDot int = 2
+  Wall   int = 3
+)
+
 type Game struct {
   Width int
   Height int
-  PlayerPos Point
+  PlayerPos utils.Point
   PlayerDir direction
   NextDir direction
   PlayerChar string
@@ -53,10 +57,6 @@ func updateGame() tea.Msg {
 
 
 func (g Game) Init() tea.Cmd {
-  // g.ghosts = append(g.ghosts, ghost{point{g.Width - 2, g.Height - 2}, "B", blinky})
-  // g.ghosts = append(g.ghosts, ghost{point{g.Width - 2, 1}, "I", inky})
-  // g.ghosts = append(g.ghosts, ghost{point{1, g.Height - 2}, "P", pinky})
-  // g.ghosts = append(g.ghosts, ghost{point{1, 1}, "Y", clyde})
   return updateGame
 }
 
@@ -142,6 +142,10 @@ var (
   white = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
   blue = lipgloss.NewStyle().Foreground(lipgloss.Color("#1919a6"))
   pink = lipgloss.NewStyle().Foreground(lipgloss.Color("#dea185"))
+  blinky = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff0000"))
+  pinky = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffb8ff"))
+  inky = lipgloss.NewStyle().Foreground(lipgloss.Color("#00ffff"))
+  clyde = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffb852"))
 )
 
 const (
@@ -163,6 +167,7 @@ const (
 
   dot = "•"
   bigDot = "●"
+  ghostChar = "A"
 )
 
 func (g Game) View() string {
@@ -174,17 +179,33 @@ func (g Game) View() string {
   s += "Score: " + white.Render(strconv.Itoa(g.Score)) + "\n"
   for y := 0; y < g.Height; y++ {
     for x := 0; x < g.Width; x++ {
+      foundGhost := false
+      for i, ghost := range g.Ghosts {
+        if x == ghost.Pos.X && y == ghost.Pos.Y {
+          switch i {
+          case 0:
+            s += blinky.Render(ghostChar)
+          case 1:
+            s += pinky.Render(ghostChar)
+          case 2:
+            s += inky.Render(ghostChar)
+          case 3:
+            s += clyde.Render(ghostChar)
+          }
+          foundGhost = true
+        }
+      }
       if x == g.PlayerPos.X && y == g.PlayerPos.Y {
         s += yellow.Render(g.PlayerChar)
-      } else {
+      } else if !foundGhost {
         switch g.GameMap[y][x] {
-        case 0:
+        case Empty:
           s += white.Render(" ")
-        case 1:
+        case Dot:
           s += pink.Render(dot)
-        case 2:
+        case BigDot:
           s += pink.Render(bigDot)
-        case 3:
+        case Wall:
           left := 0
           if x > 0 {
             left = g.GameMap[y][x - 1]
@@ -239,5 +260,6 @@ func (g Game) View() string {
     s += "\n"
   }
   s += yellow.Render("CCC")
+
   return s
 }
