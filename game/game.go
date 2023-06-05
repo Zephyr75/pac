@@ -77,37 +77,37 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
   case updateMsg:
     switch g.NextDir {
     case Up:
-      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
+      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 3 {
         g.PlayerDir = g.NextDir
       }
     case Down:
-      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 2 {
+      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 3 {
         g.PlayerDir = g.NextDir
       }
     case Left:
-      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 2 {
+      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 3 {
         g.PlayerDir = g.NextDir
       }
     case Right:
-      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 2 {
+      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 3 {
         g.PlayerDir = g.NextDir
       }
     }
     switch g.PlayerDir {
     case Up:
-      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
+      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 3 {
         g.PlayerPos.Y--
       }
     case Down:
-      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 2 {
+      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 3 {
         g.PlayerPos.Y++
       }
     case Left:
-      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 2 {
+      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 3 {
         g.PlayerPos.X--
       }
     case Right:
-      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 2 {
+      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 3 {
         g.PlayerPos.X++
       }
     }
@@ -137,8 +137,30 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 
 var (
-  yellow = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffeb3b"))
+  yellow = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffff00"))
   white = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
+  blue = lipgloss.NewStyle().Foreground(lipgloss.Color("#1919a6"))
+)
+
+const (
+  horiz = "━"
+  vert = "┃"
+  horizLeft = "╸"
+  horizRight = "╺"
+  vertUp = "╹"
+  vertDown = "╻"
+  topLeft = "┏"
+  topRight = "┓"
+  botLeft = "┗"
+  botRight = "┛"
+  tDown = "┳"
+  tUp = "┻"
+  tLeft = "┫"
+  tRight = "┣"
+  cross = "╋"
+
+  dot = "•"
+  bigDot = "●"
 )
 
 func (g Game) View() string {
@@ -156,9 +178,58 @@ func (g Game) View() string {
         case 0:
           s += white.Render(" ")
         case 1:
-          s += white.Render(".")
+          s += white.Render(dot)
         case 2:
-          s += white.Render("#")
+          s += white.Render(bigDot)
+        case 3:
+          left := 0
+          if x > 0 {
+            left = g.GameMap[y][x - 1]
+          }
+          right := 0
+          if x < g.Width - 1 {
+            right = g.GameMap[y][x + 1]
+          }
+          up := 0
+          if y > 0 {
+            up = g.GameMap[y - 1][x]
+          }
+          down := 0
+          if y < g.Height - 1 {
+            down = g.GameMap[y + 1][x]
+          }
+
+          if left == 3 && right == 3 && up == 3 && down == 3 {
+            s += blue.Render(cross)
+          } else if left == 3 && right == 3 && up == 3 {
+            s += blue.Render(tUp)
+          } else if left == 3 && right == 3 && down == 3 {
+            s += blue.Render(tDown)
+          } else if left == 3 && up == 3 && down == 3 {
+            s += blue.Render(tLeft)
+          } else if right == 3 && up == 3 && down == 3 {
+            s += blue.Render(tRight)
+          } else if left == 3 && up == 3 {
+            s += blue.Render(botRight)
+          } else if left == 3 && down == 3 {
+            s += blue.Render(topRight)
+          } else if right == 3 && up == 3 {
+            s += blue.Render(botLeft)
+          } else if right == 3 && down == 3 {
+            s += blue.Render(topLeft)
+          } else if up == 3 && down == 3 {      
+            s += blue.Render(vert)
+          } else if left == 3 && right == 3 {
+            s += blue.Render(horiz)
+          } else if left == 3 {
+            s += blue.Render(horizLeft)
+          } else if right == 3 {
+            s += blue.Render(horizRight)
+          } else if up == 3 {
+            s += blue.Render(vertUp)
+          } else if down == 3 {
+            s += blue.Render(vertDown)
+          }
         }
       }
     }

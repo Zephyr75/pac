@@ -38,13 +38,21 @@ func LoadGame(level int) game.Game {
       case '.':
         line = append(line, 1)
         dots++
-      case '#':
+      case '●':
         line = append(line, 2)
+      case '#':
+        line = append(line, 3)
       case 'C':
         playerPos = game.Point{X: i, Y: lineNbr}
         line = append(line, 1)
       case '1':
         mapTeleports[1] = append(mapTeleports[1], game.Point{X: i, Y: lineNbr})
+        line = append(line, 0)
+      case '2':
+        mapTeleports[2] = append(mapTeleports[2], game.Point{X: i, Y: lineNbr})
+        line = append(line, 0)
+      case '3':
+        mapTeleports[3] = append(mapTeleports[3], game.Point{X: i, Y: lineNbr})
         line = append(line, 0)
       default:
         line = append(line, 0)
