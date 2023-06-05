@@ -140,6 +140,7 @@ var (
   yellow = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffff00"))
   white = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
   blue = lipgloss.NewStyle().Foreground(lipgloss.Color("#1919a6"))
+  pink = lipgloss.NewStyle().Foreground(lipgloss.Color("#dea185"))
 )
 
 const (
@@ -169,6 +170,7 @@ func (g Game) View() string {
     s += "You win!\n"
     return s
   }
+  s += "Score: " + white.Render(strconv.Itoa(g.Score)) + "\n"
   for y := 0; y < g.Height; y++ {
     for x := 0; x < g.Width; x++ {
       if x == g.PlayerPos.X && y == g.PlayerPos.Y {
@@ -178,9 +180,9 @@ func (g Game) View() string {
         case 0:
           s += white.Render(" ")
         case 1:
-          s += white.Render(dot)
+          s += pink.Render(dot)
         case 2:
-          s += white.Render(bigDot)
+          s += pink.Render(bigDot)
         case 3:
           left := 0
           if x > 0 {
@@ -235,9 +237,6 @@ func (g Game) View() string {
     }
     s += "\n"
   }
-  s += "Score: " + white.Render(strconv.Itoa(g.Score)) + "\n"
-  s += "Dots: " + white.Render(strconv.Itoa(g.Dots)) + "\n"
-  s += "Current direction: " + white.Render(strconv.Itoa(int(g.PlayerDir))) + "\n"
-  s += "Next direction: " + white.Render(strconv.Itoa(int(g.NextDir))) + "\n"
+  s += yellow.Render("CCC")
   return s
 }
