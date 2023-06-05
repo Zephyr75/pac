@@ -46,6 +46,7 @@ type Game struct {
   Dots int
   Ghosts []ghost.Ghost
   Teleports []Teleport
+  Counter int
 }
 
 type updateMsg int
@@ -124,11 +125,7 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         g.PlayerPos = g.Teleports[i].A
       }
     }
-    if g.PlayerChar == "C" { 
-      g.PlayerChar = "c"
-    } else {
-      g.PlayerChar = "C"
-    }
+    g.Counter++
     return g, updateGame
   }
   return g, nil
@@ -167,7 +164,7 @@ const (
 
   dot = "•"
   bigDot = "●"
-  ghostChar = "A"
+  ghostChar = "⋂"
 )
 
 func (g Game) View() string {
@@ -196,7 +193,11 @@ func (g Game) View() string {
         }
       }
       if x == g.PlayerPos.X && y == g.PlayerPos.Y {
-        s += yellow.Render(g.PlayerChar)
+        if g.Counter % 2 == 0 {
+          s += yellow.Render("C")
+        } else {
+          s += yellow.Render("c")
+        }
       } else if !foundGhost {
         switch g.GameMap[y][x] {
         case Empty:
@@ -204,7 +205,11 @@ func (g Game) View() string {
         case Dot:
           s += pink.Render(dot)
         case BigDot:
-          s += pink.Render(bigDot)
+          if g.Counter % 6 < 3 {
+            s += pink.Render(" ")
+          } else {
+            s += pink.Render(bigDot)
+          }
         case Wall:
           left := 0
           if x > 0 {
