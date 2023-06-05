@@ -23,6 +23,7 @@ func LoadGame(level int) game.Game {
 
   width := 0
   height := 0
+  dots := 0
 
   lineNbr := 0
 	for scanner.Scan() {
@@ -35,6 +36,7 @@ func LoadGame(level int) game.Game {
       switch c {
       case '.':
         line = append(line, 1)
+        dots++
       case '#':
         line = append(line, 2)
       case 'C':
@@ -56,6 +58,7 @@ func LoadGame(level int) game.Game {
     PlayerChar: "C",
     PlayerDir: game.Right,
     GameMap: gameMap,
+    Dots: dots,
     // Ghosts: make([]game.Ghost, 0),
   }
 

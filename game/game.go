@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
   "time"
+  "strconv"
 )
 
 type Point struct {
@@ -28,8 +29,11 @@ type Game struct {
   Height int
   PlayerPos Point
   PlayerDir direction
+  NextDir direction
   PlayerChar string
   GameMap [][]int
+  Score int
+  Dots int
   Ghosts []ghost.Ghost
 }
 
@@ -54,25 +58,35 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
   case tea.KeyMsg:
     switch msg.String() {
     case "up", "k":
-      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
-        g.PlayerDir = Up
-      }
+      g.NextDir = Up
     case "down", "j":
-      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 2 {
-        g.PlayerDir = Down
-      }
+      g.NextDir = Down
     case "left", "h":
-      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 2 {
-        g.PlayerDir = Left
-      }
+      g.NextDir = Left
     case "right", "l":
-      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 2 {
-        g.PlayerDir = Right
-      }
+      g.NextDir = Right
     case "ctrl+c":
       return g, tea.Quit
     }
   case updateMsg:
+    switch g.NextDir {
+    case Up:
+      if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
+        g.PlayerDir = g.NextDir
+      }
+    case Down:
+      if g.PlayerPos.Y < g.Height - 1 && g.GameMap[g.PlayerPos.Y + 1][g.PlayerPos.X] != 2 {
+        g.PlayerDir = g.NextDir
+      }
+    case Left:
+      if g.PlayerPos.X > 0 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X - 1] != 2 {
+        g.PlayerDir = g.NextDir
+      }
+    case Right:
+      if g.PlayerPos.X < g.Width - 1 && g.GameMap[g.PlayerPos.Y][g.PlayerPos.X + 1] != 2 {
+        g.PlayerDir = g.NextDir
+      }
+    }
     switch g.PlayerDir {
     case Up:
       if g.PlayerPos.Y > 0 && g.GameMap[g.PlayerPos.Y - 1][g.PlayerPos.X] != 2 {
@@ -91,7 +105,11 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         g.PlayerPos.X++
       }
     }
-    g.GameMap[g.PlayerPos.Y][g.PlayerPos.X] = 0
+    if g.GameMap[g.PlayerPos.Y][g.PlayerPos.X] == 1 {
+      g.Score++
+      g.Dots--
+      g.GameMap[g.PlayerPos.Y][g.PlayerPos.X] = 0
+    }
     if g.PlayerChar == "C" { 
       g.PlayerChar = "c"
     } else {
@@ -112,6 +130,10 @@ var (
 
 func (g Game) View() string {
   var s string
+  if g.Dots <= 0 {
+    s += "You win!\n"
+    return s
+  }
   for y := 0; y < g.Height; y++ {
     for x := 0; x < g.Width; x++ {
       if x == g.PlayerPos.X && y == g.PlayerPos.Y {
@@ -129,5 +151,9 @@ func (g Game) View() string {
     }
     s += "\n"
   }
+  s += "Score: " + white.Render(strconv.Itoa(g.Score)) + "\n"
+  s += "Dots: " + white.Render(strconv.Itoa(g.Dots)) + "\n"
+  s += "Current direction: " + white.Render(strconv.Itoa(int(g.PlayerDir))) + "\n"
+  s += "Next direction: " + white.Render(strconv.Itoa(int(g.NextDir))) + "\n"
   return s
 }
