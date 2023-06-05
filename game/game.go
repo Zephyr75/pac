@@ -14,6 +14,11 @@ type Point struct {
   Y int
 }
 
+type Teleport struct {
+  A Point
+  B Point
+}
+
 
 type direction int
 
@@ -35,6 +40,7 @@ type Game struct {
   Score int
   Dots int
   Ghosts []ghost.Ghost
+  Teleports []Teleport
 }
 
 type updateMsg int
@@ -109,6 +115,13 @@ func (g Game) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
       g.Score++
       g.Dots--
       g.GameMap[g.PlayerPos.Y][g.PlayerPos.X] = 0
+    }
+    for i := 0; i < len(g.Teleports); i++ {
+      if g.PlayerPos == g.Teleports[i].A {
+        g.PlayerPos = g.Teleports[i].B
+      } else if g.PlayerPos == g.Teleports[i].B {
+        g.PlayerPos = g.Teleports[i].A
+      }
     }
     if g.PlayerChar == "C" { 
       g.PlayerChar = "c"

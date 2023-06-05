@@ -24,6 +24,7 @@ func LoadGame(level int) game.Game {
   width := 0
   height := 0
   dots := 0
+  mapTeleports := make(map[int][]game.Point)
 
   lineNbr := 0
 	for scanner.Scan() {
@@ -42,6 +43,9 @@ func LoadGame(level int) game.Game {
       case 'C':
         playerPos = game.Point{X: i, Y: lineNbr}
         line = append(line, 1)
+      case '1':
+        mapTeleports[1] = append(mapTeleports[1], game.Point{X: i, Y: lineNbr})
+        line = append(line, 0)
       default:
         line = append(line, 0)
       }
@@ -51,6 +55,14 @@ func LoadGame(level int) game.Game {
   }
   height = lineNbr
 
+  teleports := make([]game.Teleport, 0)
+  for i := 0; i < len(mapTeleports[1]); i += 2 {
+    teleports = append(teleports, game.Teleport{
+      A: mapTeleports[1][i],
+      B: mapTeleports[1][i + 1],
+    })
+  }
+
   game := game.Game {
     Width: width,
     Height: height,
@@ -59,6 +71,7 @@ func LoadGame(level int) game.Game {
     PlayerDir: game.Right,
     GameMap: gameMap,
     Dots: dots,
+    Teleports: teleports,
     // Ghosts: make([]game.Ghost, 0),
   }
 
