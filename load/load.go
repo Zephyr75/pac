@@ -54,6 +54,7 @@ func LoadGame(level int) game.Game {
     Height: height,
     PlayerPos: playerPos,
     PlayerChar: "C",
+    PlayerDir: game.Right,
     GameMap: gameMap,
     // Ghosts: make([]game.Ghost, 0),
   }
