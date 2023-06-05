@@ -38,7 +38,7 @@ func LoadGame(level int) game.Game {
       case '.':
         line = append(line, 1)
         dots++
-      case '●':
+      case 'o':
         line = append(line, 2)
       case '#':
         line = append(line, 3)
@@ -76,7 +76,7 @@ func LoadGame(level int) game.Game {
     Height: height,
     PlayerPos: playerPos,
     PlayerChar: "C",
-    PlayerDir: game.Right,
+    PlayerDir: game.Idle,
     GameMap: gameMap,
     Dots: dots,
     Teleports: teleports,

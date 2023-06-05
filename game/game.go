@@ -27,6 +27,7 @@ const (
   Down  direction = 1
   Left  direction = 2
   Right direction = 3
+  Idle  direction = 4
 )
 
 type Game struct {
